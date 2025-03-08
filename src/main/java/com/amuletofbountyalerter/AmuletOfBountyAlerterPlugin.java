@@ -6,10 +6,7 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.api.coords.WorldPoint;
@@ -18,7 +15,11 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import java.util.*;
-
+import net.runelite.api.EquipmentInventorySlot;
+import net.runelite.api.Item;
+import net.runelite.api.ItemContainer;
+import net.runelite.api.ItemID;
+import net.runelite.client.ui.overlay.OverlayManager;
 @Slf4j
 @PluginDescriptor(
 	name = "Amulet Of Bounty Alerter"
@@ -34,6 +35,12 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Inject
 	private ChatMessageManager chatMessageManager;
 
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private AmuletOfBountyOverlay amuletOverlay;
+
 	/*
 	 * This was automatically created from the wiki https://oldschool.runescape.wiki/w/List_of_banks
 	 * if there is an error please let me know
@@ -45,7 +52,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 			new WorldArea(2667, 3375, 12, 12, 0), // North of Ardougne
 			new WorldArea(1735, 3555, 12, 12, 0), // South-west corner of Hosidius
 			new WorldArea(3794, 2836, 12, 12, 2), // Harmony Island
-			new WorldArea(1239, 3727, 12, 12, 0), // Farming Guild todo update coordinates
+			new WorldArea(1239, 3727, 12, 12, 0), // Farming Guild
 			new WorldArea(3291, 6100, 12, 12, 0), // Prifddinas
 			new WorldArea(1586, 3099, 12, 12, 0) // West of Civitas illa Fortis
 	);
@@ -55,6 +62,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	{
 		log.info("Amulet Of Bounty Alerter started!");
 		sendChatMessage("Amulet Of Bounty Alerter has been enabled!");
+		overlayManager.add(amuletOverlay);
 	}
 
 	private void sendChatMessage(String message) {
@@ -85,16 +93,13 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		return false;
 	}
 
-	//From example repo
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Amulet of Bounty Alerter says " + config.greeting(), null);
-		}
-	}
+	public boolean isWearingAmuletOfBounty() {
+		ItemContainer equipment = client.getItemContainer(net.runelite.api.InventoryID.EQUIPMENT);
+		if (equipment == null) return false;
 
+		Item amulet = equipment.getItem(EquipmentInventorySlot.AMULET.getSlotIdx());
+		return amulet != null && amulet.getId() == ItemID.AMULET_OF_BOUNTY;
+	}
 
 	@Provides
 	AmuletOfBountyAlerterConfig provideConfig(ConfigManager configManager)
