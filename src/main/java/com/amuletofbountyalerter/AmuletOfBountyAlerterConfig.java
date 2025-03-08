@@ -7,13 +7,15 @@ import net.runelite.client.config.ConfigItem;
 @ConfigGroup("example")
 public interface AmuletOfBountyAlerterConfig extends Config
 {
+
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+			keyName = "activeNearAllotment",
+			name = "Only active near allotment",
+			description = "Only alert when an allotment patch is rendered",
+			position = 1
 	)
-	default String greeting()
+	default boolean activeNearBank()
 	{
-		return "Hello";
+		return true;
 	}
 }
