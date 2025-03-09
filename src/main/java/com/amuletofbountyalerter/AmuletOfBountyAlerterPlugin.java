@@ -42,19 +42,18 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private AmuletOfBountyOverlay amuletOverlay;
 
 	/*
-	 * This was automatically created from the wiki https://oldschool.runescape.wiki/w/List_of_banks
-	 * if there is an error please let me know
+	 * I personally went to all these locations and handpicked the coordinates myself
 	 * */
 	private static final List<WorldArea> ALLOTMENT_AREAS = ImmutableList.of(
-			new WorldArea(3055, 3308, 12, 12, 0), // South of Falador
-			new WorldArea(3602, 3526, 12, 12, 0), // West of Port Phasmatys
-			new WorldArea(2810, 3464, 12, 12, 0), // North of Catherby
+			new WorldArea(3044, 3299, 25, 18, 0), // South of Falador
+			new WorldArea(3589, 3517, 30, 22, 0), // West of Port Phasmatys
+			new WorldArea(2800, 3455, 21, 18, 0), // North of Catherby
 			new WorldArea(2659, 3366, 18, 17, 0), // North of Ardougne
-			new WorldArea(1735, 3555, 12, 12, 0), // South-west corner of Hosidius
-			new WorldArea(3794, 2836, 12, 12, 2), // Harmony Island
-			new WorldArea(1239, 3727, 12, 12, 0), // Farming Guild
-			new WorldArea(3291, 6100, 12, 12, 0), // Prifddinas
-			new WorldArea(1586, 3099, 12, 12, 0) // West of Civitas illa Fortis
+			new WorldArea(1726, 3543, 20, 23, 0), // South-west corner of Hosidius
+			new WorldArea(3790, 2831, 13, 12, 2), // Harmony Island
+			new WorldArea(1254, 3719, 26, 23, 0), // Farming Guild
+			new WorldArea(3286, 6087, 12, 25, 0), // Prifddinas
+			new WorldArea(1577, 3089, 22, 19, 0) // West of Civitas illa Fortis
 	);
 
 	@Override

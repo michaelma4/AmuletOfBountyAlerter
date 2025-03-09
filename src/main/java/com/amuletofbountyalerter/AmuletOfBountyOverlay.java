@@ -8,6 +8,7 @@ import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 
 public class AmuletOfBountyOverlay extends Overlay {
@@ -19,8 +20,6 @@ public class AmuletOfBountyOverlay extends Overlay {
     public AmuletOfBountyOverlay(Client client, AmuletOfBountyAlerterPlugin plugin) {
         this.client = client;
         this.plugin = plugin;
-        setPosition(OverlayPosition.BOTTOM_RIGHT); // Places it next to the inventory
-        setLayer(OverlayLayer.ABOVE_WIDGETS); // Ensures it's visible over UI elements
     }
 
     @Inject
@@ -28,26 +27,20 @@ public class AmuletOfBountyOverlay extends Overlay {
 
     @Override
     public Dimension render(Graphics2D graphics) {
+        panelComponent.getChildren().clear();
         // Always show the overlay if activeNearAllotment() is true
         if ((!config.onlyActiveNearAllotment() && !plugin.isWearingAmuletOfBounty()) || (plugin.nearAnAllotment() && !plugin.isWearingAmuletOfBounty())) {
-            panelComponent.getChildren().clear();
 
-            // Set overlay background color
-            panelComponent.setBackgroundColor(new Color(255, 0, 0, 128)); // Red if missing amulet
+            // Ensure full-width background
+            panelComponent.setPreferredSize(new Dimension(150, 0)); // Set a fixed width
+            panelComponent.setBackgroundColor(new Color(255, 0, 0, 128));
 
             // Add message
-            if (plugin.nearAnAllotment() && !plugin.isWearingAmuletOfBounty()) {
-                panelComponent.getChildren().add(net.runelite.client.ui.overlay.components.TitleComponent.builder()
-                        .text("You are not wearing an Amulet Of Bounty!")
-                        .color(Color.WHITE)
-                        .build());
-            } else {
-                panelComponent.getChildren().add(net.runelite.client.ui.overlay.components.TitleComponent.builder()
-                        .text("You are not wearing an Amulet Of Bounty!")
-                        .color(Color.WHITE)
-                        .build());
-            }
+            panelComponent.getChildren().add((LineComponent.builder())
+                    .left("You are not wearing an Amulet Of Bounty!")
+                    .build());
 
+            setPosition(OverlayPosition.BOTTOM_RIGHT);
             return panelComponent.render(graphics);
         }
 
