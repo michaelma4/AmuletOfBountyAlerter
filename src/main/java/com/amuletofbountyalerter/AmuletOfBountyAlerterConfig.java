@@ -9,12 +9,12 @@ public interface AmuletOfBountyAlerterConfig extends Config
 {
 
 	@ConfigItem(
-			keyName = "activeNearAllotment",
+			keyName = "onlyActiveNearAllotment",
 			name = "Only active near allotment",
 			description = "Only alert when an allotment patch is rendered",
 			position = 1
 	)
-	default boolean activeNearBank()
+	default boolean onlyActiveNearAllotment()
 	{
 		return true;
 	}

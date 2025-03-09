@@ -49,7 +49,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 			new WorldArea(3055, 3308, 12, 12, 0), // South of Falador
 			new WorldArea(3602, 3526, 12, 12, 0), // West of Port Phasmatys
 			new WorldArea(2810, 3464, 12, 12, 0), // North of Catherby
-			new WorldArea(2667, 3375, 12, 12, 0), // North of Ardougne
+			new WorldArea(2659, 3366, 18, 17, 0), // North of Ardougne
 			new WorldArea(1735, 3555, 12, 12, 0), // South-west corner of Hosidius
 			new WorldArea(3794, 2836, 12, 12, 2), // Harmony Island
 			new WorldArea(1239, 3727, 12, 12, 0), // Farming Guild
@@ -78,7 +78,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Example stopped!");
+		overlayManager.remove(amuletOverlay); // Remove overlay when plugin stops
+		log.info("Amulet Of Bounty Alerter stopped!");
 	}
 
 	public boolean nearAnAllotment(){
