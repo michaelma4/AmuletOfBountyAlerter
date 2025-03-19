@@ -120,23 +120,31 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
+		//If user disabled notifications, don't perform any checks and don't send any notifications at all
+		if (!config.notifyAfterPlantingWithoutAmuletOfBounty()) {
+			return;
+		}
+
 		// Only track inventory changes
 		if (event.getContainerId() != InventoryID.INVENTORY.getId())
 		{
 			return;
 		}
 
-		// Get updated inventory
 		ItemContainer container = event.getItemContainer();
 		if (container == null)
 		{
 			return;
 		}
 
-		// Count Snape Grass seeds in the new inventory
-		int currentSnapeGrassCount = countItem(container, ItemID.SNAPE_GRASS_SEED);
+		// If first-time tracking, initialize previous inventory and return
+		if (previousInventory.isEmpty())
+		{
+			previousInventory = getInventorySnapshot(container);
+			return;
+		}
 
-		// Check if the count decreased compared to the previous inventory state
+		int currentSnapeGrassCount = countItem(container, ItemID.SNAPE_GRASS_SEED);
 		int previousSnapeGrassCount = previousInventory.getOrDefault(ItemID.SNAPE_GRASS_SEED, 0);
 
 		if (currentSnapeGrassCount < previousSnapeGrassCount)
