@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -20,6 +21,11 @@ import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.api.*;
+import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.client.eventbus.Subscribe;
+import java.util.HashMap;
+import java.util.Map;
 @Slf4j
 @PluginDescriptor(
 	name = "Amulet Of Bounty Alerter"
@@ -28,6 +34,9 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 {
 	@Inject
 	private Client client;
+
+	@Inject
+	private Notifier notifier;
 
 	@Inject
 	private AmuletOfBountyAlerterConfig config;
@@ -40,6 +49,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 
 	@Inject
 	private AmuletOfBountyOverlay amuletOverlay;
+
+	private Map<Integer, Integer> previousInventory = new HashMap<>();
 
 	/*
 	 * I personally went to all these locations and handpicked the coordinates myself
@@ -74,6 +85,11 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 				.runeLiteFormattedMessage(formattedMessage)
 				.build());
 	}
+	private void notifyUser()
+	{
+		notifier.notify("You are not wearing an Amulet of Bounty!");
+	}
+
 	@Override
 	protected void shutDown() throws Exception
 	{
@@ -100,6 +116,88 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		Item amulet = equipment.getItem(EquipmentInventorySlot.AMULET.getSlotIdx());
 		return amulet != null && amulet.getId() == ItemID.AMULET_OF_BOUNTY;
 	}
+
+	@Subscribe
+	public void onItemContainerChanged(ItemContainerChanged event)
+	{
+		// Only track inventory changes
+		if (event.getContainerId() != InventoryID.INVENTORY.getId())
+		{
+			return;
+		}
+
+		// Get updated inventory
+		ItemContainer container = event.getItemContainer();
+		if (container == null)
+		{
+			return;
+		}
+
+		// Count Snape Grass seeds in the new inventory
+		int currentSnapeGrassCount = countItem(container, ItemID.SNAPE_GRASS_SEED);
+
+		// Check if the count decreased compared to the previous inventory state
+		int previousSnapeGrassCount = previousInventory.getOrDefault(ItemID.SNAPE_GRASS_SEED, 0);
+
+		if (currentSnapeGrassCount < previousSnapeGrassCount)
+		{
+			// Snape Grass seed was planted, now check if Amulet of Bounty is equipped
+			checkAmuletOfBounty();
+		}
+
+		// Update inventory tracking
+		previousInventory = getInventorySnapshot(container);
+	}
+
+	private void checkAmuletOfBounty()
+	{
+		ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
+		if (equipment == null)
+		{
+			notifyUser();
+			return;
+		}
+
+		int amuletSlot = EquipmentInventorySlot.AMULET.getSlotIdx();
+		if (amuletSlot >= equipment.getItems().length || equipment.getItems()[amuletSlot] == null)
+		{
+			notifyUser();
+			return;
+		}
+
+		int amuletId = equipment.getItems()[amuletSlot].getId();
+		if (amuletId != ItemID.AMULET_OF_BOUNTY)
+		{
+			notifyUser();
+		}
+	}
+
+	private int countItem(ItemContainer container, int itemId)
+	{
+		int count = 0;
+		for (Item item : container.getItems())
+		{
+			if (item != null && item.getId() == itemId)
+			{
+				count += item.getQuantity();
+			}
+		}
+		return count;
+	}
+
+	private Map<Integer, Integer> getInventorySnapshot(ItemContainer container)
+	{
+		Map<Integer, Integer> snapshot = new HashMap<>();
+		for (Item item : container.getItems())
+		{
+			if (item != null)
+			{
+				snapshot.put(item.getId(), snapshot.getOrDefault(item.getId(), 0) + item.getQuantity());
+			}
+		}
+		return snapshot;
+	}
+
 
 	@Provides
 	AmuletOfBountyAlerterConfig provideConfig(ConfigManager configManager)
