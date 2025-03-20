@@ -36,12 +36,6 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	public AmuletOfBountyAlerterPlugin(Client client)
-	{
-		this.client = client;
-	}
-
-	@Inject
 	private Notifier notifier;
 
 	@Inject
@@ -57,6 +51,9 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private AmuletOfBountyOverlay amuletOverlay;
 
 	private Map<Integer, Integer> previousInventory = new HashMap<>();
+	public void setPreviousInventory(Map<Integer, Integer> inventory) {
+		this.previousInventory = inventory;
+	}
 
 	/*
 	 * I personally went to all these locations and handpicked the coordinates myself
@@ -67,7 +64,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 			new WorldArea(2800, 3455, 21, 18, 0), // North of Catherby
 			new WorldArea(2659, 3366, 18, 17, 0), // North of Ardougne
 			new WorldArea(1726, 3543, 20, 23, 0), // South-west corner of Hosidius
-			new WorldArea(3790, 2831, 13, 12, 2), // Harmony Island
+			new WorldArea(3790, 2831, 13, 12, 0), // Harmony Island
 			new WorldArea(1254, 3719, 26, 23, 0), // Farming Guild
 			new WorldArea(3286, 6087, 12, 25, 0), // Prifddinas
 			new WorldArea(1577, 3089, 22, 19, 0) // West of Civitas illa Fortis
@@ -91,7 +88,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 				.runeLiteFormattedMessage(formattedMessage)
 				.build());
 	}
-	private void notifyUser()
+
+	public void notifyUser()
 	{
 		notifier.notify("You are not wearing an Amulet of Bounty!");
 	}
@@ -153,7 +151,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		int currentSnapeGrassCount = countItem(container, ItemID.SNAPE_GRASS_SEED);
 		int previousSnapeGrassCount = previousInventory.getOrDefault(ItemID.SNAPE_GRASS_SEED, 0);
 
-		if (currentSnapeGrassCount < previousSnapeGrassCount)
+		if (currentSnapeGrassCount < previousSnapeGrassCount && nearAnAllotment())
 		{
 			// Snape Grass seed was planted, now check if Amulet of Bounty is equipped
 			checkAmuletOfBounty();
