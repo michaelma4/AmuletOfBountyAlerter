@@ -36,6 +36,12 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	public AmuletOfBountyAlerterPlugin(Client client)
+	{
+		this.client = client;
+	}
+
+	@Inject
 	private Notifier notifier;
 
 	@Inject
@@ -97,7 +103,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		log.info("Amulet Of Bounty Alerter stopped!");
 	}
 
-	public boolean nearAnAllotment(){
+	public boolean nearAnAllotment() {
 		WorldPoint playerPos = client.getLocalPlayer().getWorldLocation();
 		for(WorldArea worldArea: ALLOTMENT_AREAS)
 		{
@@ -157,6 +163,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		previousInventory = getInventorySnapshot(container);
 	}
 
+	//Will send the user a notification for any scenario where they just planted snape grass seeds but were not wearing
+	// an amulet of bounty
 	private void checkAmuletOfBounty()
 	{
 		ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
@@ -205,7 +213,6 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 		}
 		return snapshot;
 	}
-
 
 	@Provides
 	AmuletOfBountyAlerterConfig provideConfig(ConfigManager configManager)
