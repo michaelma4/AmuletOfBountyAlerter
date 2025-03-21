@@ -24,10 +24,18 @@ dependencies {
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	//For unit testing
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+	testImplementation 'org.mockito:mockito-core:4.0.0'
+	testImplementation 'org.mockito:mockito-inline:4.8.1'
+}
+
+test {
+	useJUnitPlatform() // Required for JUnit 5
 }
 
 group = 'com.amuletofbountyalerter'
-version = '1.1'
+version = '1.2'
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
