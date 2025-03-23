@@ -1,11 +1,7 @@
 package com.amuletofbountyalerter;
 
-import net.runelite.client.config.Config;
 import net.runelite.client.ui.overlay.WidgetItemOverlay;
-import net.runelite.client.ui.overlay.OverlayLayer;
-import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.util.ColorUtil;
 import net.runelite.api.Client;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.api.ItemID;
@@ -13,7 +9,7 @@ import net.runelite.api.ItemID;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class AmuletOverlay extends WidgetItemOverlay
+public class AmuletItemOverlay extends WidgetItemOverlay
 {
     private final Client client;
     private final AmuletOfBountyAlerterPlugin plugin;
@@ -23,7 +19,7 @@ public class AmuletOverlay extends WidgetItemOverlay
     private AmuletOfBountyAlerterConfig config;
 
     @Inject
-    public AmuletOverlay(Client client, ItemManager itemManager, AmuletOfBountyAlerterPlugin plugin)
+    public AmuletItemOverlay(Client client, ItemManager itemManager, AmuletOfBountyAlerterPlugin plugin)
     {
         this.client = client;
         this.itemManager = itemManager;
