@@ -48,7 +48,10 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private AmuletOfBountyOverlay amuletOverlay;
+	private AmuletOfBountyOverlay amuletOfBountyOverlay;
+
+	@Inject
+	private AmuletItemOverlay amuletItemOverlay;
 
 	private Map<Integer, Integer> previousInventory = new HashMap<>();
 	public void setPreviousInventory(Map<Integer, Integer> inventory) {
@@ -75,7 +78,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	{
 		log.info("Amulet Of Bounty Alerter started!");
 		sendChatMessage("Amulet Of Bounty Alerter has been enabled!");
-		overlayManager.add(amuletOverlay);
+		overlayManager.add(amuletOfBountyOverlay);
+		overlayManager.add(amuletItemOverlay);
 	}
 
 	private void sendChatMessage(String message) {
@@ -97,7 +101,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		overlayManager.remove(amuletOverlay); // Remove overlay when plugin stops
+		overlayManager.remove(amuletOfBountyOverlay); // Remove overlay when plugin stops
+		overlayManager.remove(amuletItemOverlay);
 		log.info("Amulet Of Bounty Alerter stopped!");
 	}
 
@@ -124,7 +129,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		//If user disabled notifications, don't perform any checks and don't send any notifications at all
+		// If user disabled notifications, don't perform any checks and don't send any notifications at all
 		if (!config.notifyAfterPlantingWithoutAmuletOfBounty()) {
 			return;
 		}
@@ -148,20 +153,34 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 			return;
 		}
 
-		int currentSnapeGrassCount = countItem(container, ItemID.SNAPE_GRASS_SEED);
-		int previousSnapeGrassCount = previousInventory.getOrDefault(ItemID.SNAPE_GRASS_SEED, 0);
+		// List of seeds to track
+		int[] seedIds = {
+				ItemID.SNAPE_GRASS_SEED,
+				ItemID.POTATO_SEED,
+				ItemID.ONION_SEED,
+				ItemID.CABBAGE_SEED,
+				ItemID.TOMATO_SEED,
+				ItemID.SWEETCORN_SEED,
+				ItemID.STRAWBERRY_SEED,
+				ItemID.WATERMELON_SEED
+		};
 
-		if (currentSnapeGrassCount < previousSnapeGrassCount && nearAnAllotment())
-		{
-			// Snape Grass seed was planted, now check if Amulet of Bounty is equipped
-			checkAmuletOfBounty();
+		for (int seedId : seedIds) {
+			int currentCount = countItem(container, seedId);
+			int previousCount = previousInventory.getOrDefault(seedId, 0);
+
+			if (currentCount < previousCount && nearAnAllotment()) {
+				// A seed was planted, now check if Amulet of Bounty is equipped
+				checkAmuletOfBounty();
+				break;
+			}
 		}
 
 		// Update inventory tracking
 		previousInventory = getInventorySnapshot(container);
 	}
 
-	//Will send the user a notification for any scenario where they just planted snape grass seeds but were not wearing
+	//Will send the user a notification for any scenario where they just planted allotment seeds but were not wearing
 	// an amulet of bounty
 	private void checkAmuletOfBounty()
 	{

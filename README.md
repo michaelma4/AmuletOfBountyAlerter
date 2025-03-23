@@ -9,4 +9,5 @@ Configuration features include:
 
 -A toggle to show the overlay warning globally or only while near allotment patches
 
--A toggle to send a system notification if the user is not wearing an amulet of bounty after planting snape grass seeds
+-A toggle to send a system notification if the user is not wearing an amulet of bounty after planting any allotment 
+patch seeds
