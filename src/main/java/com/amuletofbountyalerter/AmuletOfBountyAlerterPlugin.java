@@ -48,7 +48,10 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private AmuletOfBountyOverlay amuletOverlay;
+	private AmuletOfBountyOverlay amuletOfBountyOverlay;
+
+	@Inject
+	private AmuletOverlay amuletOverlay;
 
 	private Map<Integer, Integer> previousInventory = new HashMap<>();
 	public void setPreviousInventory(Map<Integer, Integer> inventory) {
@@ -75,6 +78,7 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	{
 		log.info("Amulet Of Bounty Alerter started!");
 		sendChatMessage("Amulet Of Bounty Alerter has been enabled!");
+		overlayManager.add(amuletOfBountyOverlay);
 		overlayManager.add(amuletOverlay);
 	}
 
@@ -97,7 +101,8 @@ public class AmuletOfBountyAlerterPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		overlayManager.remove(amuletOverlay); // Remove overlay when plugin stops
+		overlayManager.remove(amuletOfBountyOverlay); // Remove overlay when plugin stops
+		overlayManager.remove(amuletOverlay);
 		log.info("Amulet Of Bounty Alerter stopped!");
 	}
 

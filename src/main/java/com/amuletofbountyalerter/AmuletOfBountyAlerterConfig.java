@@ -26,4 +26,12 @@ public interface AmuletOfBountyAlerterConfig extends Config
 			position = 2
 	)
 	default boolean notifyAfterPlantingWithoutAmuletOfBounty() { return true; }
+
+	@ConfigItem(
+			keyName = "highlightAmuletOfBountyInInventory",
+			name = "Highlight amulet of bounty",
+			description = "Highlights the amulet of bounty in your inventory if you are not wearing one",
+			position = 3
+	)
+	default boolean highlightAmuletOfBountyInInventory() { return true; }
 }
