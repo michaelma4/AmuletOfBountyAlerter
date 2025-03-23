@@ -11,3 +11,7 @@ Configuration features include:
 
 -A toggle to send a system notification if the user is not wearing an amulet of bounty after planting any allotment 
 patch seeds
+
+-A toggle to show a highlight over the amulet of bounty in your inventory if you are not wearing 1
+
+![image](https://github.com/user-attachments/assets/746353d3-75fa-4d81-a158-2634ce967040)
